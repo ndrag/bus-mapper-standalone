@@ -1,0 +1,68 @@
+/*
+Nick Dragunow, ndragunow.nz, all rights reserved. 
+
+CSS for the busMapper toolbar.
+
+Currently referenced by:
+
+		index.html (local)
+*/
+
+/*///////////////////////////////// BUSMAPPER TOOLBAR CSS /////////////////////////////////*/
+
+.busMapperButtonContainer {
+	position: absolute;
+	white-space: nowrap;
+    text-align: center;
+	margin: 0 auto;
+}
+
+.busMapperButton {
+	position: relative;
+	margin-top: 12px;
+	margin-left: 0px;
+	padding: 10px 20px 10px 20px;
+	border: none;
+	outline:0;
+	font-family: Arial;
+	color: rgb(110, 115, 50);
+	font-size: 20px;
+	background: rgb(196, 237, 134);
+	width: 195px;
+	text-decoration: none;
+	height: 62px;
+	top: -8px;
+}
+
+.busMapperButton:hover {
+	color: rgb(34, 76, 0);
+	cursor: pointer;
+}
+
+#btFirst {
+	margin-left: 4px;
+}
+
+#btSelectARoute {
+	text-align: left;
+	cursor: initial;
+	width: 594px;	
+}
+
+#btSelectARoute:hover {
+	color: rgb(110, 115, 50) !important;
+	cursor: initial !important;
+}
+
+.displayCurrentRoute {
+	position: absolute;
+	font-family: Arial;
+	text-align: center;
+	color: '#ffffff';
+	font-size: 18px;
+	font-color: red;
+	height: 23px;
+	left: 583px;
+	top: 19px;
+	width: 380px;
+}

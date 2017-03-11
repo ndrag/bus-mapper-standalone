@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<!-- Nick Dragunow, ndragunow.nz, all rights reserved. -->
+
+<head>
+
+	<!-- Meta -->
+	<meta charset="utf-8" />
+	<meta name="keywords" content ="GIS, Geographic Information Systems, Auckland Transport, AT, Nick Dragunow">
+	<meta name="author" content ="Nick Dragunow">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Page CSS -->
+    <link rel="stylesheet" type="text/css" href="./css/stylesheetIndex.css"/>
+
+	<!-- Leaflet -->
+	<link rel="stylesheet" href="./libraries/leaflet/leaflet.css" />
+	<script type="text/javascript" src="./libraries/leaflet/leaflet.js"></script>
+
+	<!-- Favicons generated at faviconit.com -->
+	<link rel="shortcut icon" href="/favicon.ico">
+	<link rel="icon" sizes="16x16 32x32 64x64" href="/favicon.ico">
+	<link rel="icon" type="image/png" sizes="196x196" href="img/favicons/fafavicon-192.png">
+	<link rel="icon" type="image/png" sizes="160x160" href="img/favicons/favicon-160.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="img/favicons/favicon-96.png">
+	<link rel="icon" type="image/png" sizes="64x64" href="img/favicons/favicon-64.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="img/favicons/favicon-32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="img/favicons/favicon-16.png">
+	<link rel="apple-touch-icon" href="img/favicons/favicon-57.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="img/favicons/favicon-114.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="img/favicons/favicon-72.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="img/favicons/favicon-144.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="img/favicons/favicon-60.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="img/favicons/favicon-120.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="img/favicons/favicon-76.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="img/favicons/favicon-152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="img/favicons/favicon-180.png">
+	<meta name="msapplication-TileColor" content="#FFFFFF">
+	<meta name="msapplication-TileImage" content="img/favicons/favicon-144.png">
+	<meta name="msapplication-config" content="img/favicons/browserconfig.xml">
+
+  	<title>BusMapper by N.D.</title>
+
+</head>
+
+<body>
+
+	<!-- ///////////////////////////////////////////////////////////////////////////////////// -->
+	<!-- //////////////////////////////////// BusMapper ////////////////////////////////////// -->
+	<!-- ///////////////////////////////////////////////////////////////////////////////////// -->
+
+	<!-- App specific dependencies (not used by anything else on this page). -->
+
+	<!-- Leaflet plugin for rotating markers based on bearing (attribution in containing file).	-->
+	<script type="text/javascript" src="./libraries/leaflet_rotated_marker/leaflet.rotatedMarker.js"></script>
+
+	<!-- JS file with all of the helper functions called by the BusMapper code below. -->
+	<script type="text/javascript" src="./js/bus_mapper/bus_mapper_functions.js"></script>
+
+	<!-- JS file with definitions for custom made leaflet markers. -->
+	<script type="text/javascript" src="./js/bus_mapper/bus_mapper_leaflet_markers.js"></script>
+
+	<!-- .js file which defines the variable 'busStopLocations' - turned into a layer feature further down. -->
+	<script type="text/javascript" src="./data/bus_stops/outer_link_clockwise_stops.js"></script>
+
+	<!-- .js file which defines the variable 'outerLinkBusRoute' - turned into a polyline further down. -->
+	<script type="text/javascript" src="./data/bus_routes/bus_route_outer_link.js"></script>
+
+	<!-- JS file with button onclick code. -->
+	<script type="text/javascript" src="./js/bus_mapper/bus_mapper_button_controls.js"></script>
+
+	<!-- CSS stylesheet for the map and its buttons. -->
+	<link rel="stylesheet" type="text/css" href="./css/bus_mapper/bus_mapper_stylesheet.css"/>
+
+	<!-- ////////////////////////////////////// HTML ///////////////////////////////////////// -->
+
+	<!-- Div for the map window. -->
+	<div id="mapContainer" style="width: 1000px; top: 100px; height: 700px; background-color: rgb(110, 155, 50)">
+
+		<div id="map" style="width: 100%; height: 90%"></div>
+
+		<div class="busMapperButtonContainer">
+
+			<button type="button" id="btFirst" class="busMapperButton" onclick="resetView()">Reset View</button>
+			<button type="button" class="busMapperButton" onclick="clearPoints()">Clear Trails</button>
+			<button type="button" id="btSelectARoute" class="busMapperButton">Current Route:</button>
+			<input type="text" class ="displayCurrentRoute" name="currentRoute" value="Outer Link (Clockwise)" readonly>
+
+		</div>
+
+	</div>
+
+
+	<!-- /////////////////////////////////////// JS ////////////////////////////////////////// -->
+
+	<script>
+
+		// Most of the JavaScript code for this tool is stored in the "./js/bus_mapper" folder:
+
+		//		bus_mapper_functions.js 			Contains all the custom functions called below.
+		//		bus_mapper_leaflet_markers.js 		Defines the behaviour of our custom leaflet markers.
+		//		bus_mapper_ui_elements.js 			#TODO
+
+		// TODO: move all of this into a function to reduce global variable clutter (poor form!).
+
+
+		////////////////////////////////// CREATE MAP & BASEMAPS /////////////////////////////////////
+
+
+		// Create the map, set the default location and zoom, and initiate it.
+		var map = L.map('map').setView([-36.859696, 174.749179], 13);
+
+		// Define a greyscale basemap, set the default location and zoom, and initiate it.
+		var greyscaleBasemap = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoibmlja2RyYWd1bm93IiwiYSI6ImNpemhwdzlrNDAxcXkyeG93Z3h4ZDU0YmsifQ.S1bIfq6la-lLXUFifrVxHA', {
+		maxZoom: 18,
+		minZoom: 13,
+		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+			'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+		id: 'mapbox.light'
+		}).addTo(map);
+
+		// Define colour map, but don't add it - it'll be available from the layer control tab.
+		var colourBasemap = L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+			maxZoom: 19,
+			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+		});
+
+		// Define a satellite basemap but don't add it - it'll be available from the layer control tab.
+		var satelliteBasemap = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+			attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+		});
+
+		///////////////////////////////// DEFINE IMPORTANT VARIABLES /////////////////////////////////
+
+
+		// This list contains layerGroup objects for each unique bus. Those layerGroups contain the 
+		// marker objects for that bus's locational data.
+		var listOfBusLayerGroups = [];
+
+		// Polyline layer (holds every polyline between bus points). This could be re-worked to allow 
+		// for differentiation between lines (i.e., lists of lines for each individual bus, not the lot).
+		var linesBetweenBusses = L.layerGroup();
+		linesBetweenBusses.addTo(map);
+
+
+		//////////////////////// ADD OVERLAYS AND BASEMAPS TO A LAYER TOGGLE /////////////////////////
+
+
+		// Create a layer of bus stops from a GeoJSON variable (explained in the function's comment).
+		var busStopLayer = createBusStopLayer();
+
+		// Create a polyline layer for the outer link bus route using a list of latlongs (actually longlats!)
+   	    var outerLinkRoute = L.polyline(outerLinkBusRoute, {color: '#2b8cbe', weight: '5', clickable: 'false'}).addTo(map);
+
+		// Add the basemaps to the layer control.
+		var baseMaps = {
+			"Greyscale": greyscaleBasemap,
+			"Colour": colourBasemap,
+			"Satellite": satelliteBasemap
+		};
+
+		// Add toggleable overlays to the alyer control.
+		var overlayMaps = {
+			"Stops (Unfinished)": busStopLayer,
+			"Route": outerLinkRoute
+		};
+
+		L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+
+        ////////////////////////////////////// ADD THE LEGEND ////////////////////////////////////////
+
+
+        // Create a legend control in the bottom right corner of the map.
+        var busMapperLegend = L.control({position: 'bottomright'});
+
+        // Define the onAdd function.
+        busMapperLegend.onAdd = function (map) {
+
+        // Create the div for the busMapperLegend in the DOM.
+        var busMapperLegend = L.DomUtil.create('div', 'busMapperLegend');
+
+        // Define the CSS within the legend - images and text.
+        busMapperLegend.innerHTML += 
+        '<div style="text-align: center; height: 200px; width: 100px; background-color: rgba(196, 237, 134, 0.9);' +
+        '-webkit-border-radius: 2; -moz-border-radius: 2; border-radius: 2px;' +
+        'border: solid rgb(110, 155, 50)">'+
+        '<br />' +
+        '<img src="data/images/outer_link_moving.png" class ="unselectable">' +
+        '<p class= "bodyText1 unselectable" style="line-height: 0px">Moving</p>' +
+        '<img src="data/images/outer_link_stopped.png" class="unselectable">' +
+        '<p class= "bodyText1 unselectable" style="line-height: 0px">Stopped</p>' +
+        '</div>'
+        
+        return busMapperLegend;
+
+        };
+
+        // Add the legend to the map.
+        busMapperLegend.addTo(map);
+
+
+		//////////////////////////////// GET & PUBLISH BUS LOCATIONS /////////////////////////////////
+
+
+		// Define an XMLHttpRequest object to make AJAX calls to the Auckland Transport server.
+		var aucklandTransportMessenger = new XMLHttpRequest();
+
+		// Associate an event listener to publish bus locations once we recieve the data. 
+		aucklandTransportMessenger.addEventListener("load", updateBusLocationsOnMap);
+
+		// Call a function which sends the AJAX HTTP GET request (runs on page load).
+		requestUpdatedBusInformation();
+
+		// Run the above function every 30 seconds to update bus locations.
+		var requestUpdatedBusInformation = setInterval(requestUpdatedBusInformation, 30000);
+
+	</script>
+
+</body>
+
+</html>
