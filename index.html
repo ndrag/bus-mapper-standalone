@@ -151,7 +151,7 @@
 		var busStopLayer = createBusStopLayer();
 
 		// Create a polyline layer for the outer link bus route using a list of latlongs (actually longlats!)
-   	    var outerLinkRoute = L.polyline(outerLinkBusRoute, {color: '#2b8cbe', weight: '5', clickable: 'false'}).addTo(map);
+   	    	var outerLinkRoute = L.polyline(outerLinkBusRoute, {color: '#2b8cbe', weight: '5', clickable: 'false'}).addTo(map);
 
 		// Add the basemaps to the layer control.
 		var baseMaps = {
@@ -169,36 +169,36 @@
 		L.control.layers(baseMaps, overlayMaps).addTo(map);
 
 
-        ////////////////////////////////////// ADD THE LEGEND ////////////////////////////////////////
+		////////////////////////////////////// ADD THE LEGEND ////////////////////////////////////////
 
 
-        // Create a legend control in the bottom right corner of the map.
-        var busMapperLegend = L.control({position: 'bottomright'});
+		// Create a legend control in the bottom right corner of the map.
+		var busMapperLegend = L.control({position: 'bottomright'});
 
-        // Define the onAdd function.
-        busMapperLegend.onAdd = function (map) {
+		// Define the onAdd function.
+		busMapperLegend.onAdd = function (map) {
 
-        // Create the div for the busMapperLegend in the DOM.
-        var busMapperLegend = L.DomUtil.create('div', 'busMapperLegend');
+		// Create the div for the busMapperLegend in the DOM.
+		var busMapperLegend = L.DomUtil.create('div', 'busMapperLegend');
 
-        // Define the CSS within the legend - images and text.
-        busMapperLegend.innerHTML += 
-        '<div style="text-align: center; height: 200px; width: 100px; background-color: rgba(196, 237, 134, 0.9);' +
-        '-webkit-border-radius: 2; -moz-border-radius: 2; border-radius: 2px;' +
-        'border: solid rgb(110, 155, 50)">'+
-        '<br />' +
-        '<img src="data/images/outer_link_moving.png" class ="unselectable">' +
-        '<p class= "bodyText1 unselectable" style="line-height: 0px">Moving</p>' +
-        '<img src="data/images/outer_link_stopped.png" class="unselectable">' +
-        '<p class= "bodyText1 unselectable" style="line-height: 0px">Stopped</p>' +
-        '</div>'
-        
-        return busMapperLegend;
+		// Define the CSS within the legend - images and text.
+		busMapperLegend.innerHTML += 
+		'<div style="text-align: center; height: 200px; width: 100px; background-color: rgba(196, 237, 134, 0.9);' +
+		'-webkit-border-radius: 2; -moz-border-radius: 2; border-radius: 2px;' +
+		'border: solid rgb(110, 155, 50)">'+
+		'<br />' +
+		'<img src="data/images/outer_link_moving.png" class ="unselectable">' +
+		'<p class= "bodyText1 unselectable" style="line-height: 0px">Moving</p>' +
+		'<img src="data/images/outer_link_stopped.png" class="unselectable">' +
+		'<p class= "bodyText1 unselectable" style="line-height: 0px">Stopped</p>' +
+		'</div>'
 
-        };
+		return busMapperLegend;
 
-        // Add the legend to the map.
-        busMapperLegend.addTo(map);
+		};
+
+		// Add the legend to the map.
+		busMapperLegend.addTo(map);
 
 
 		//////////////////////////////// GET & PUBLISH BUS LOCATIONS /////////////////////////////////
