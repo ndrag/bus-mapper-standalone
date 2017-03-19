@@ -73,20 +73,14 @@ function updateBusLocationsOnMap() {
 //			map
 
 	// Define the list of route IDs which service the clockwise outer link. Note: in future
-	// this (and other route definitions) will be de declared in a separate file, and set by
-	// a selector in index.html. This function will search the DOM for that object.
+	// this (and other route definitions) will be built on page load.
 	var routesServicingClockwiseOuterLink = [
-		"73102-20170210140734_v51.4",
-		"73102-20170214155712_v51.8",
-		"73104-20170210140734_v51.4",
-		"73104-20170214155712_v51.8",
-		"73108-20170210140734_v51.4",
-		"73108-20170214155712_v51.8",
-		"73110-20170210140734_v51.4",
-		"73110-20170214155712_v51.8",
-		"73106-20170210140734_v51.4",
-		"73106-20170214155712_v51.8",]
-
+		"73102",
+		"73104",
+		"73106",
+		"73108",
+		"73110"]
+	
 	// Log the return of data - #TODO: expand this by returning the status code.
 	console.log("Data received.");
 
@@ -105,8 +99,11 @@ function updateBusLocationsOnMap() {
 		// Extract the bus's route ID.
 		var routeId = getRouteId(currentBus);
 
+		// Split the unique route ID number away from the variable trailing data information.
+		var routeIdWithoutVersionNumber = routeId.substring(0, 5);
+
 		// If the route ID is in the clockwise Outer Link list, push its coordinates to the map.
-		if (routesServicingClockwiseOuterLink.indexOf(routeId) >= 0) {
+		if (routesServicingClockwiseOuterLink.indexOf(routeIdWithoutVersionNumber) >= 0) {
 			
 			// Extract the bus's id number.
 			var busNumber = getBusNumber(currentBus);
