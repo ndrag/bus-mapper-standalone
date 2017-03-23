@@ -81,6 +81,14 @@ function updateBusLocationsOnMap() {
 		"73108",
 		"73110"]
 	
+	// Anti-clockwise route. Currently unused.
+	var routesServicingAnticlockwiseOuterLink = [
+		"72101",
+		"72103",
+		"72105",
+		"72107",
+		"72111"]
+
 	// Log the return of data - #TODO: expand this by returning the status code.
 	console.log("Data received.");
 
